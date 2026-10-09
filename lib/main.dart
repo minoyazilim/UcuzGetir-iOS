@@ -54,20 +54,7 @@ class _StoreShellState extends State<StoreShell> {
     super.initState();
     _catalog = ProductCatalogController(ProductCatalogService());
     _favorites = FavoritesStore();
-    _pages = [
-      CatalogScreen(
-        controller: _catalog,
-        favorites: _favorites,
-        favoritesOnly: false,
-      ),
-      CatalogScreen(
-        controller: _catalog,
-        favorites: _favorites,
-        favoritesOnly: true,
-      ),
-      null,
-      null,
-    ];
+    _pages = [_createPage(0), _createPage(1), null, null];
     _catalog.load();
     _favorites.load();
   }
@@ -80,13 +67,28 @@ class _StoreShellState extends State<StoreShell> {
   }
 
   Widget _createPage(int index) {
-    if (index == 2) {
-      return StoreWebViewScreen(
-        initialUrl: Uri.https('www.ucuzgetir.com', '/sepet.aspx'),
-        title: 'Sepetim',
-      );
+    switch (index) {
+      case 0:
+        return StoreWebViewScreen(
+          initialUrl: Uri.https('www.ucuzgetir.com', '/Default.aspx'),
+          title: 'Mağaza',
+        );
+      case 1:
+        return CatalogScreen(
+          controller: _catalog,
+          favorites: _favorites,
+          favoritesOnly: true,
+        );
+      case 2:
+        return StoreWebViewScreen(
+          initialUrl: Uri.https('www.ucuzgetir.com', '/sepet.aspx'),
+          title: 'Sepetim',
+        );
+      case 3:
+        return const AccountScreen();
+      default:
+        throw RangeError.index(index, _pages, 'index');
     }
-    return const AccountScreen();
   }
 
   void _selectTab(int index) {
